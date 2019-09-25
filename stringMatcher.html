@@ -1,0 +1,181 @@
+<html>
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <meta content="">
+    
+    <script type="text/javascript" src="./papaparse.min.js"></script>
+    
+</head>
+
+<body>
+    <div>
+        <input type="file" id="file"></input>
+    
+        </div>
+        <div>
+            <input type="file" id="file1"></input>            
+            <button id="start_button" style="width: auto; height:30;" onclick="start()">start</button>
+            
+            
+        </div>
+        
+        
+        <script>
+            var str1 = [];
+            var str2 = [];
+            
+            function parse(csv){
+                console.log('this the papa parser');
+                
+                let data = [];
+                return new Promise((resolve,reject)=>{
+                    
+                    Papa.parse(csv, {
+                        header: true,
+                        complete: async function (results) {
+                            console.log('papa result ..  on completee..',results);
+                            try {
+                                for(i=0;i<results.data.length;i++){
+                                    if(results.data[i].string){
+                                        data.push(results.data[i].string.toLowerCase().trim());
+                                    }
+                                }
+                                resolve(data);
+                            } catch (error) {
+                                console.log('papa error',error);
+                                reject(error)
+                            }
+                        }
+                    });
+                    
+                });
+                
+            } 
+            
+            function parse_2nd_column(csv){
+                
+                let data = [];
+                return new Promise((resolve,reject)=>{
+                    
+                    Papa.parse(csv, {
+                        header: true,
+                        complete: async function (results) {
+                            console.log('papa result ..  on completee..',results);
+                            try {
+                                for(i=0;i<results.data.length;i++){
+                                    if(results.data[i].string){
+                                        data.push(results.data[i].Tesss.toLowerCase().trim());
+                                    }
+                                }
+                                resolve(data);
+                            } catch (error) {
+                                console.log('papa error',error);
+                                reject(error)
+                            }
+                        }
+                    });
+                    
+                });
+                
+            }
+            async function start() {
+                // body...
+                try{
+                    
+                    var file1 = document.getElementById("file").files[0];
+                    var file2 = document.getElementById("file1").files[0];
+                    
+                    
+                    let str1 = await parse(file1);
+                    // console.log('papa result1',str1);
+                    
+                    let str2 = await parse(file2);
+                    // console.log('papa result2',str2);
+                    
+                    
+                    let resultArray = intersect(str1,str2);
+                    
+                    console.log("resultArray",resultArray);
+                    
+                    let not_in_file1 = difference(str1,str2);
+                    
+                    let not_in_file2 = difference(str2,str1);
+                    
+                    console.log(not_in_file1,not_in_file2);
+                    
+                    let length = (str1.length>str2.length)?(str1.length):(str2.length);
+                    
+                    let output=[];
+                    
+                    for (var k = 0; k < length; k++) {
+                        
+                        let obj = {
+                            common : (resultArray[k])?(resultArray[k]):(""),
+                            not_in_File1 : (not_in_file1[k])?(not_in_file1[k]):(""),
+                            not_in_File2 : (not_in_file2[k])?(not_in_file2[k]):("")
+                        }
+                        
+                        output.push(obj);
+                    }
+                    var csv = Papa.unparse(output);
+                    
+                    var element = document.createElement('a');
+                    element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv));
+                    element.setAttribute('download', 'download.csv');
+                    
+                    element.style.display = 'none';
+                    document.body.appendChild(element);
+                    
+                    element.click();
+                    
+                    document.body.removeChild(element);
+                    
+                    
+                }catch(err){
+                    console.log(err);
+                    alert(err);
+                }
+                
+            }
+            
+            
+            // function difference(a,b) {
+            //         return b.filter(function(i) {return a.indexOf(i) < 0;});
+            //     }
+                
+                function difference(array1,array2){
+                    let a =  array1.map(el=> el.trim().toLowerCase());
+                    let b =  array2.map(el=> el.trim().toLowerCase());
+                    const intersection = b.filter(element => !a.includes(element));
+                    return intersection;
+                }
+                
+                
+                function intersect(array1,array2){
+                    let a =  array1.map(el=> el.trim().toLowerCase());
+                    console.log('array 1.....', a);
+                    
+                    let b =  array2.map(el=> el.trim().toLowerCase());
+                    console.log('array 1.....',b);
+                    
+                    const intersection = a.filter(element => b.includes(element));
+                    return intersection;
+                }
+                
+                // function intersect(a, b) {
+                //         var t;
+                //         if (b.length > a.length) t = b, b = a, a = t; // indexOf to loop over shorter
+                //         return a.filter(function (e) {
+                //                 return b.indexOf(e) > -1;
+                //             });
+                //         }
+                        
+                        
+                    </script>
+                </body>
+                
+                </html>
