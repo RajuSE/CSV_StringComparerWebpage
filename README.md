@@ -1,5 +1,5 @@
 # 🔖 CSV_StringComparerWebpage
-Compare two CSV files, give results like diffs, similarities in one CSV. Helpful for Android & iOS strings localization
+Compare two CSV files, give results like strins "common" in both files, "strings not in file1" & "strings not in file2" in single CSV. Helpful for Android & iOS strings comparison for localization.
 
 
 ## 💻 Libraries used:
